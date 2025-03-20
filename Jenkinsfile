@@ -1,19 +1,59 @@
 pipeline {
     agent any
+
+    environment {
+        DOCKER_IMAGE = "your-dockerhub-username/your-image-name:latest"
+    }
+
     stages {
-        stage('Build') {
+        stage('Checkout Code') {
             steps {
-                echo 'Building the application...'
+                script {
+                    git credentialsId: 'github-credentials', url: 'git@github.com:your-username/your-repo.git', branch: 'side'
+                }
             }
         }
-        stage('Test') {
+
+        stage('Build Docker Image') {
             steps {
-                echo 'Running tests...'
+                script {
+                    sh "docker build -t ${DOCKER_IMAGE} ."
+                }
             }
         }
-        stage('Deploy') {
+
+        stage('Login to DockerHub') {
             steps {
-                echo 'Deploying application...'
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+                    }
+                }
+            }
+        }
+
+        stage('Push Image to DockerHub') {
+            steps {
+                script {
+                    sh "docker push ${DOCKER_IMAGE}"
+                }
+            }
+        }
+
+        stage('Deploy to Production') {
+            steps {
+                script {
+                    sshagent(['ssh-to-prod']) {
+                        sh '''
+                        ssh -o StrictHostKeyChecking=no ubuntu@44.211.78.151 << EOF
+                            docker stop jenkins_container || true
+                            docker rm jenkins_container || true
+                            docker pull ${DOCKER_IMAGE}
+                            docker run -d --name jenkins_container -p 8080:8080 ${DOCKER_IMAGE}
+                        EOF
+                        '''
+                    }
+                }
             }
         }
     }
