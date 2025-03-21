@@ -47,6 +47,7 @@ pipeline {
                         withCredentials([string(credentialsId: 'prod-server-ip', variable: 'PROD_IP')]) {
                             sh '''
                             ssh -i $SSH_KEY -o StrictHostKeyChecking=no ubuntu@$PROD_IP << EOF
+                                 --group-add $(stat -c "%g" /var/run/docker.sock)
                                 docker rm -f $(docker ps -aq)
                                 docker pull ${DOCKER_IMAGE}
                                 docker run -d --name prod_container -p 8080:8080 ${DOCKER_IMAGE}
