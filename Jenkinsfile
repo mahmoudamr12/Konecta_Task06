@@ -9,7 +9,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 script {
-                    git credentialsId: 'github-credentials', url: 'git@github.com:mahmoudamr12/Konecta_Task06.git', branch: 'side'
+                    git credentialsId: 'github-credentials', url: 'https://github.com/mahmoudamr12/Konecta_Task06.git', branch: 'side'
                 }
             }
         }
