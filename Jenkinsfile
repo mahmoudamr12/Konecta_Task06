@@ -51,11 +51,11 @@ pipeline {
                                 sudo usermod -aG docker ubuntu
                                 # Apply the changes immediately
                                 newgrp docker
-                                docker ps -aq | xargs -r docker rm -f
+                                docker ps -aq | xargs -r docker rm -f # delete all running containers
                                 docker pull ${DOCKER_IMAGE}
                                 
                                 # Run the container
-                                docker run -d --name prod_container2 -p 80:80 ${DOCKER_IMAGE}
+                                docker run -d --name prod_container -p 80:80 ${DOCKER_IMAGE}
                                 docker ps
 EOF
                             '''
