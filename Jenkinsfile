@@ -2,14 +2,14 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "your-dockerhub-username/your-image-name:latest"
+        DOCKER_IMAGE = "mahmoudamr/jenkins-image:latest"
     }
 
     stages {
         stage('Checkout Code') {
             steps {
                 script {
-                    git credentialsId: 'github-credentials', url: 'git@github.com:your-username/your-repo.git', branch: 'side'
+                    git credentialsId: 'github-credentials', url: 'git@github.com:mahmoudamr12/Konecta_Task06.git', branch: 'side'
                 }
             }
         }
