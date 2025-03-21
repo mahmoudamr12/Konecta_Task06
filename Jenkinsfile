@@ -40,7 +40,7 @@ pipeline {
             }
         }
 
-        stage('Deploy to Productionn') {
+        stage('Deploy to Production') { // Fixed typo
             steps {
                 script {
                     sshagent(['ssh-to-prod']) {
@@ -58,4 +58,5 @@ pipeline {
                 }
             }
         }
+    } // Added missing closing bracket
 }
