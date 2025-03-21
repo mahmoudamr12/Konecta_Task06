@@ -40,13 +40,13 @@ pipeline {
             }
         }
 
-        stage('Deploy to Production') { // Fixed typo
+        stage('Deploy to Production') {
             steps {
                 script {
-                    sshagent(['prod-ssh-key']) {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'prod-ssh-key', keyFileVariable: 'SSH_KEY')]) {
                         withCredentials([string(credentialsId: 'prod-server-ip', variable: 'PROD_IP')]) {
                             sh '''
-                            ssh -o StrictHostKeyChecking=no ubuntu@$PROD_IP << EOF
+                            ssh -i $SSH_KEY -o StrictHostKeyChecking=no ubuntu@$PROD_IP << EOF
                                 docker rm -f $(docker ps -aq)
                                 docker pull ${DOCKER_IMAGE}
                                 docker run -d --name prod_container -p 8080:8080 ${DOCKER_IMAGE}
@@ -57,5 +57,5 @@ pipeline {
                 }
             }
         }
-    } // Added missing closing bracket
-}
+    } // Correctly closes "stages" block
+} // Correctly closes "pipeline" block
