@@ -46,7 +46,7 @@ pipeline {
                     withCredentials([sshUserPrivateKey(credentialsId: 'prod-ssh-key', keyFileVariable: 'SSH_KEY')]) {
                         withCredentials([string(credentialsId: 'prod-server-ip', variable: 'PROD_IP')]) {
                             sh '''
-                            ssh -i $SSH_KEY -o StrictHostKeyChecking=no ubuntu@$PROD_IP << 'EOF'
+                            ssh -i $SSH_KEY -o StrictHostKeyChecking=no ubuntu@$PROD_IP << EOF
                                 whoami
                                 # Add the user to the docker group
                                 sudo usermod -aG docker ubuntu
