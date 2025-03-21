@@ -52,6 +52,7 @@ pipeline {
                                 # Apply the changes immediately
                                 newgrp docker
                                 docker rm -f $(docker ps -aq)
+                                docker ps
                                 docker pull ${DOCKER_IMAGE}
                                 
                                 # Run the container
