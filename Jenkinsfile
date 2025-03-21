@@ -50,7 +50,7 @@ pipeline {
                                 
                                 whoami
                                 # Add the user to the docker group
-                                sudo usermod -aG docker \$USER
+                                sudo usermod -aG docker ubuntu
                                 # Apply the changes immediately
                                 newgrp docker
                                 docker rm -f $(docker ps -aq)
