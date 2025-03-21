@@ -50,15 +50,10 @@ pipeline {
                                 whoami
                                 # Add the user to the docker group
                                 sudo usermod -aG docker ubuntu
-                                
-                                # Apply changes (session won't persist new group without logout)
-                                sudo su - ubuntu -c "docker ps"
-
-                                # Stop and remove existing containers
-                                sudo docker rm -f $(sudo docker ps -aq)
-                                
-                                # Pull the latest image
-                                sudo docker pull ${DOCKER_IMAGE}
+                                # Apply the changes immediately
+                                newgrp docker
+                                docker rm -f $(docker ps -aq)
+                                docker pull ${DOCKER_IMAGE}
                                 
                                 # Run the container
                                 sudo docker run -d --name prod_container -p 8080:8080 ${DOCKER_IMAGE}
