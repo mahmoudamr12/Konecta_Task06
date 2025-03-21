@@ -46,22 +46,28 @@ pipeline {
                     withCredentials([sshUserPrivateKey(credentialsId: 'prod-ssh-key', keyFileVariable: 'SSH_KEY')]) {
                         withCredentials([string(credentialsId: 'prod-server-ip', variable: 'PROD_IP')]) {
                             sh '''
-                            ssh -i $SSH_KEY -o StrictHostKeyChecking=no ubuntu@$PROD_IP << EOF
-                                
+                            ssh -i $SSH_KEY -o StrictHostKeyChecking=no ubuntu@$PROD_IP << 'EOF'
                                 whoami
                                 # Add the user to the docker group
                                 sudo usermod -aG docker ubuntu
-                                # Apply the changes immediately
-                                newgrp docker
-                                docker rm -f $(docker ps -aq)
-                                docker pull ${DOCKER_IMAGE}
-                                docker run -d --name prod_container -p 8080:8080 ${DOCKER_IMAGE}
-                            EOF
+                                
+                                # Apply changes (session won't persist new group without logout)
+                                sudo su - ubuntu -c "docker ps"
+
+                                # Stop and remove existing containers
+                                sudo docker rm -f $(sudo docker ps -aq)
+                                
+                                # Pull the latest image
+                                sudo docker pull ${DOCKER_IMAGE}
+                                
+                                # Run the container
+                                sudo docker run -d --name prod_container -p 8080:8080 ${DOCKER_IMAGE}
+EOF
                             '''
                         }
                     }
                 }
             }
         }
-    } // Correctly closes "stages" block
-} // Correctly closes "pipeline" block
+    }
+}
