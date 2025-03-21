@@ -56,7 +56,7 @@ pipeline {
                                 docker pull ${DOCKER_IMAGE}
                                 
                                 # Run the container
-                                sudo docker run -d --name prod_container -p 8080:8080 ${DOCKER_IMAGE}
+                                sudo docker run -d --name prod_container -p 80:80 ${DOCKER_IMAGE}
                                 docker ps
 EOF
                             '''
