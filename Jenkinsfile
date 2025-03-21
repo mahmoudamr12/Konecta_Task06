@@ -57,6 +57,7 @@ pipeline {
                                 
                                 # Run the container
                                 sudo docker run -d --name prod_container -p 8080:8080 ${DOCKER_IMAGE}
+                                docker ps
 EOF
                             '''
                         }
