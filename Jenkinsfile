@@ -51,9 +51,7 @@ pipeline {
                                 sudo usermod -aG docker ubuntu
                                 # Apply the changes immediately
                                 newgrp docker
-                                docker ps -aq
-                                docker rm -f $(docker ps -aq)
-                                docker ps
+                                docker ps -aq | xargs -r docker rm -f
                                 docker pull ${DOCKER_IMAGE}
                                 
                                 # Run the container
