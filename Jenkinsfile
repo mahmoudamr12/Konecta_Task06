@@ -47,7 +47,6 @@ pipeline {
                         withCredentials([string(credentialsId: 'prod-server-ip', variable: 'PROD_IP')]) {
                             sh '''
                             ssh -i $SSH_KEY -o StrictHostKeyChecking=no ubuntu@$PROD_IP << EOF
-                                whoami
                                 # Add the user to the docker group
                                 sudo usermod -aG docker ubuntu
                                 # Apply the changes immediately
@@ -56,7 +55,7 @@ pipeline {
                                 docker pull ${DOCKER_IMAGE}
                                 
                                 # Run the container
-                                docker run -d --name prod_container -p 80:80 ${DOCKER_IMAGE}
+                                docker run -d --name prod_container2 -p 80:80 ${DOCKER_IMAGE}
                                 docker ps
 EOF
                             '''
