@@ -1,5 +1,6 @@
 - name: Install Docker and Run Jenkins
   hosts: cicd
+  gather_facts: no
   become: true
   
   tasks:
@@ -43,7 +44,9 @@
 
     - name: Run Jenkins container
       shell: |
-        docker run -d --name jenkins_container -p 8080:8080 jenkins/jenkins
+        docker rm -f $(docker ps -aq)
+        #docker volume create jenkins_data
+        docker run -d --name jenkins_container -p 8080:8080 -v /var/lib/jenkins:/var/lib/jenkins -v /var/run/docker.sock:/var/run/docker.sock -v /usr/bin/docker:/usr/bin/docker --group-add $(stat -c "%g" /var/run/docker.sock)  jenkins/jenkins
       become: yes
 
     - name: Verify Jenkins is running
