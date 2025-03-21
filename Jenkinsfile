@@ -47,10 +47,9 @@ pipeline {
                         withCredentials([string(credentialsId: 'prod-server-ip', variable: 'PROD_IP')]) {
                             sh '''
                             ssh -o StrictHostKeyChecking=no ubuntu@$PROD_IP << EOF
-                                docker stop jenkins_container || true
-                                docker rm jenkins_container || true
+                                docker rm -f $(docker ps -aq)
                                 docker pull ${DOCKER_IMAGE}
-                                docker run -d --name jenkins_container -p 8080:8080 ${DOCKER_IMAGE}
+                                docker run -d --name prod_container -p 8080:8080 ${DOCKER_IMAGE}
                             EOF
                             '''
                         }
