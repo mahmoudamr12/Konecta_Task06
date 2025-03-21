@@ -1,6 +1,5 @@
 - name: Install Docker and Run Jenkins
   hosts: cicd
-  gather_facts: no
   become: true
   
   tasks:
