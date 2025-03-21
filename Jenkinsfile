@@ -44,17 +44,18 @@ pipeline {
             steps {
                 script {
                     sshagent(['ssh-to-prod']) {
-                        sh '''
-                        ssh -o StrictHostKeyChecking=no ubuntu@44.211.78.151 << EOF
-                            docker stop jenkins_container || true
-                            docker rm jenkins_container || true
-                            docker pull ${DOCKER_IMAGE}
-                            docker run -d --name jenkins_container -p 8080:8080 ${DOCKER_IMAGE}
-                        EOF
-                        '''
+                        withCredentials([string(credentialsId: 'prod-server-ip', variable: 'PROD_IP')]) {
+                            sh '''
+                            ssh -o StrictHostKeyChecking=no ubuntu@$PROD_IP << EOF
+                                docker stop jenkins_container || true
+                                docker rm jenkins_container || true
+                                docker pull ${DOCKER_IMAGE}
+                                docker run -d --name jenkins_container -p 8080:8080 ${DOCKER_IMAGE}
+                            EOF
+                            '''
+                        }
                     }
                 }
             }
         }
-    }
 }
