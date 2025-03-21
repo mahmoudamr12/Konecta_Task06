@@ -43,7 +43,7 @@ pipeline {
         stage('Deploy to Production') { // Fixed typo
             steps {
                 script {
-                    sshagent(['ssh-to-prod']) {
+                    sshagent(['prod-ssh-key']) {
                         withCredentials([string(credentialsId: 'prod-server-ip', variable: 'PROD_IP')]) {
                             sh '''
                             ssh -o StrictHostKeyChecking=no ubuntu@$PROD_IP << EOF
