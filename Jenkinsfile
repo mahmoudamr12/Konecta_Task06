@@ -8,8 +8,18 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                script {
-                    git credentialsId: 'github-credentials', url: 'https://github.com/mahmoudamr12/Konecta_Task06.git', branch: 'side'
+                script 
+                {
+                    // Detect if triggered by a pull request or merge
+                    if (env.GITHUB_EVENT_NAME == 'pull_request') {
+                        echo "Triggered by a Pull Request"
+                        git credentialsId: 'github-credentials', url: 'https://github.com/mahmoudamr12/Konecta_Task06.git', branch: env.CHANGE_BRANCH
+                    } else if (env.GITHUB_EVENT_NAME == 'push') {
+                        echo "Triggered by a Push"
+                        git credentialsId: 'github-credentials', url: 'https://github.com/mahmoudamr12/Konecta_Task06.git', branch: 'main'
+                    } else {
+                        error "Pipeline triggered by an unknown event: ${env.GITHUB_EVENT_NAME}"
+                    }
                 }
             }
         }
